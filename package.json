@@ -1,6 +1,6 @@
 {
   "name": "vue-clear-template-ts",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,6 +9,9 @@
     "new:comp": "node ./scripts/generateComponent.js"
   },
   "dependencies": {
+    "@sentry/browser": "^5.15.4",
+    "@sentry/integrations": "^5.15.4",
+    "@sentry/webpack-plugin": "^1.10.0",
     "@types/axios": "^0.14.0",
     "axios": "^0.19.2",
     "chalk": "^4.0.0",

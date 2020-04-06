@@ -1,11 +1,28 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import router from '../../../router'
+import { ServerApiErrorInfo } from '@/types'
 
-declare module 'axios' {
-  interface AxiosInstance {
-    (config: AxiosRequestConfig): Promise<any>;
+function errorReport(
+  url: string,
+  error: string | Error,
+  requestOptions: AxiosRequestConfig | null,
+  response?: AnyObject
+) {
+  if (window.$sentry) {
+    const errorInfo: ServerApiErrorInfo = {
+      error: typeof error === 'string' ? new Error(error) : error,
+      type: 'request',
+      requestUrl: url,
+      requestOptions: JSON.stringify(requestOptions)
+    }
+
+    if (response) {
+      errorInfo.response = JSON.stringify(response)
+    }
+    window.$sentry.log(errorInfo)
   }
 }
+
 const service = axios.create({
   timeout: 60000,
   baseURL: process.env.BASE_URL,
@@ -24,7 +41,7 @@ service.interceptors.request.use((config: AxiosRequestConfig) => {
   return Promise.reject(error)
 })
 
-service.interceptors.response.use((response: any) => {
+service.interceptors.response.use((response: AxiosResponse) => {
   const responseCode = response.status
   // 如果返回的状态码为200，说明接口请求成功，可以正常拿到数据
   // 否则的话抛出错误
@@ -34,6 +51,8 @@ service.interceptors.response.use((response: any) => {
     return Promise.reject(response)
   }
 }, error => {
+  errorReport(error.request.responseURL, error, null)
+
   if (!error.response) {
     if (error.message.includes('timeout')) {
       console.log('超时了')
@@ -85,6 +104,7 @@ service.interceptors.response.use((response: any) => {
       break
     // 其他错误，直接抛出错误提示
     default:
+
     // Message({
     //   message: error.response.data.message,
     //   type: 'error'

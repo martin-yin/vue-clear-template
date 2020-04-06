@@ -1,5 +1,12 @@
-import { IMovie } from './movie';
-
+import { IMovie } from './movie'
+import {
+  ReportOptions,
+  ServerApiErrorInfo,
+  NativeApiErrorInfo
+} from './sentry'
 export {
-  IMovie
+  IMovie,
+  ReportOptions,
+  ServerApiErrorInfo,
+  NativeApiErrorInfo
 }

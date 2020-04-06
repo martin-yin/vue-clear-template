@@ -1,4 +1,8 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const CompressionPlugin = require('compression-webpack-plugin')
+const SentryWebpackPlugin = require('@sentry/webpack-plugin')
+const version = require('./package.json').version
+
 module.exports = {
   chainWebpack: config => {
     config.plugin('define').tap(args => {
@@ -6,9 +10,16 @@ module.exports = {
       return args
     })
 
+    config.module
+      .rule('eslint')
+      .use('eslint-loader')
+      .loader('eslint-loader')
+      .tap(options => {
+        options.fix = true
+        return options
+      })
     if (process.env.NODE_ENV === 'production') {
-
-      var externals = {
+      const externals = {
         vue: 'Vue',
         axios: 'axios',
         'element-ui': 'ELEMENT',
@@ -16,7 +27,6 @@ module.exports = {
         vuex: 'Vuex'
       }
       config.externals(externals)
-
       const cdn = {
         css: [
         ],
@@ -28,7 +38,7 @@ module.exports = {
           // vuex
           'https://cdn.bootcss.com/vuex/3.1.2/vuex.min.js',
           // axios
-          'https://cdn.bootcss.com/axios/0.19.2/axios.min.js',
+          'https://cdn.bootcss.com/axios/0.19.2/axios.min.js'
         ]
       }
       config.plugin('html')
@@ -46,6 +56,17 @@ module.exports = {
           minRatio: 0.8,
           cache: true
         }])
+
+      config.plugin('sentry').use(
+        SentryWebpackPlugin, [{
+          release: `vue-clear-teamplate@${version}`,
+          include: './dist/js', // 需要上传到sentry服务器的资源目录,会自动匹配 js 以及 map 文件
+          urlPrefix: '~/js',
+          ignoreFile: '.sentrycliignore',
+          configFile: 'sentry.properties', // 不用改
+          ignore: ['node_modules'] // 忽略文件目录, 当然我们在 inlcude 中制定了文件路径,这个忽略目录可以不加
+        }]
+      )
     }
   },
   devServer: {

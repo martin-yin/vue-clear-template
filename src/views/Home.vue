@@ -14,7 +14,7 @@ import { movieInteractor } from '../core'
 export default class Home extends Vue {
   private created() {
     movieInteractor.getMovieList().then(res => {
-      console.log(res)
+      console.log(res[0])
     })
   }
 }

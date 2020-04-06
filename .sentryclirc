@@ -1,0 +1,7 @@
+[defaults]
+url = https://sentry.io/
+org = yin-2c
+project = vue-clear-template
+
+[auth]
+token = 2013f1b97e304bd99d640e78b3d2d65e973647c57bb144ddb4871ae8c70dc2ad

@@ -2,7 +2,7 @@ export interface IMovie {
   id: Number;
   title: String;
   genres: Array<String>;
-  collectCount: number;
+  collectCount: Number;
   mainlandPubdate: String;
   images: String;
   casts: Array<IActor>;
